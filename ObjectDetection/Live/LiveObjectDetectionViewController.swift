@@ -22,6 +22,7 @@ class LiveObjectDetectionViewController: ViewController {
     private var cardMonth: String!
     private var cardYear: String!
     
+    
     //테스트
 //    var backLayer: CALayer!
 //    var maskLayerColor: UIColor = UIColor.black
@@ -151,6 +152,11 @@ class LiveObjectDetectionViewController: ViewController {
         cardMonth = String(dateValue[...dateValue.index(dateValue.startIndex, offsetBy: 1)])
         cardYear = String(dateValue[dateValue.index(dateValue.startIndex, offsetBy: 3)...])
         
+        if !(luhnCheck(cardNumber as String)) {
+            print("카드번호 체크섬")
+            return ("실패", 0)
+        }
+        
         if Int(cardMonth)! > 12 || Int(cardMonth)! < 1 {
             print("month 값 오류")
             return ("실패", 0)
@@ -159,7 +165,7 @@ class LiveObjectDetectionViewController: ViewController {
             print("year 값 오류")
             return ("실패", 0)
         }
-
+        
         var countNumber: Int = 1
         var numberResult: String = ""
         for s in numberValue{
@@ -177,8 +183,27 @@ class LiveObjectDetectionViewController: ViewController {
         return (resultText, score/Float(index))
     }
     
-    func cardValid() {
-        
+    func luhnCheck(_ number: String) -> Bool {
+        var sum = 0
+        let digitStrings = number.reversed().map { String($0) }
+
+        for tuple in digitStrings.enumerated() {
+            if let digit = Int(tuple.element) {
+                let odd = tuple.offset % 2 == 1
+
+                switch (odd, digit) {
+                case (true, 9):
+                    sum += 9
+                case (true, 0...8):
+                    sum += (digit * 2) % 9
+                default:
+                    sum += digit
+                }
+            } else {
+                return false
+            }
+        }
+        return sum % 10 == 0
     }
     
     
