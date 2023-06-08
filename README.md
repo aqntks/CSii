@@ -1,3 +1,3 @@
 # CSii
 CSii
-server
+server iphone
